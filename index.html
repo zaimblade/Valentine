@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter For You</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-pink: #f18c9a;
+            --env-back: #e8a5af;
+            --env-front: #fbd1d8;
+            --env-shadow: #e097a3;
+            --text-red: #d92d3b;
+            --letter-bg: #fdfaf6;
+            --text-dark: #4a4a4a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-pink);
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* --- Envelope Container --- */
+        .envelope-wrapper {
+            position: relative;
+            width: clamp(300px, 90vw, 450px);
+            height: clamp(200px, 60vw, 300px);
+            cursor: pointer;
+            transition: transform 0.4s ease;
+            margin-bottom: 2rem;
+            margin-top: 5rem;
+        }
+
+        .envelope-wrapper:not(.opened):hover {
+            transform: translateY(-10px);
+        }
+
+        .envelope-wrapper.opened {
+            cursor: default;
+        }
+
+        .envelope-back {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 85%;
+            background-color: var(--env-back);
+            border-radius: 10px 10px 20px 20px;
+            z-index: 1;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        /* --- The Letter --- */
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 80%;
+            background-color: var(--letter-bg);
+            border-radius: 8px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 10%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 1s ease;
+        }
+
+        .letter h1 {
+            color: var(--text-red);
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .letter h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--text-red);
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            margin: -10px 0 0 0;
+            transform: rotate(-5deg);
+            text-align: center;
+        }
+
+        .letter-hint {
+            margin-top: 25px;
+            font-size: 1rem;
+            color: #a0a0a0;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 1s ease 0.5s;
+            animation: pulse 1.5s infinite;
+        }
+
+        .paperclip {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            transform: rotate(15deg);
+        }
+
+        /* --- Envelope Front Flaps --- */
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: clamp(150px, 45vw, 225px) solid var(--env-shadow);
+            border-right: clamp(150px, 45vw, 225px) solid var(--env-shadow);
+            border-bottom: clamp(100px, 30vw, 150px) solid var(--env-front);
+            border-top: clamp(65px, 20vw, 100px) solid transparent;
+            border-radius: 0 0 20px 20px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .envelope-front::after {
+            content: '';
+            position: absolute;
+            left: calc(clamp(150px, 45vw, 225px) * -1);
+            bottom: calc(clamp(100px, 30vw, 150px) * -1);
+            width: 0;
+            height: 0;
+            border-left: clamp(150px, 45vw, 225px) solid transparent;
+            border-right: clamp(150px, 45vw, 225px) solid transparent;
+            border-bottom: clamp(100px, 30vw, 150px) solid var(--env-front);
+            border-top: clamp(65px, 20vw, 100px) solid transparent;
+        }
+
+        /* --- Decorations --- */
+        .bow {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(3rem, 10vw, 4.5rem);
+            z-index: 4;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            pointer-events: none;
+        }
+
+        .stamp {
+            position: absolute;
+            bottom: 10%;
+            right: 5%;
+            width: clamp(40px, 12vw, 60px);
+            height: clamp(50px, 15vw, 70px);
+            background-color: #fff;
+            border: 3px dashed #ecc;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            transform: rotate(8deg);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            pointer-events: none;
+        }
+
+        .rose {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            font-size: clamp(3rem, 10vw, 5rem);
+            z-index: 0;
+            transform: rotate(-15deg);
+        }
+
+        /* --- Animation Classes --- */
+        .letter.extracted {
+            transform: translate(-50%, -75%) scale(1.35);
+            z-index: 10;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        .letter.extracted:hover {
+            transform: translate(-50%, -78%) scale(1.38);
+        }
+
+        .letter.extracted .letter-hint {
+            opacity: 1;
+        }
+
+        .fade-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease; 
+        }
+
+        .fade-overlay.active {
+            opacity: 1;
+        }
+
+        .envelope-hint {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+            transition: opacity 0.5s ease;
+            white-space: nowrap;
+        }
+
+        /* --- Countdown Timer (from main.html) --- */
+        .countdown-container { 
+            display: flex; 
+            gap: clamp(10px, 2vw, 25px); 
+            margin-top: 3rem; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            z-index: 5;
+            padding: 0 15px;
+        }
+        
+        .time-box {
+            background: white; 
+            padding: clamp(10px, 2vw, 15px) clamp(15px, 3vw, 25px); 
+            border-radius: 12px;
+            border: 2px solid var(--text-red); 
+            box-shadow: 5px 5px 0px rgba(217, 45, 59, 0.3); 
+            min-width: clamp(70px, 15vw, 90px);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        
+        .time-box:hover {
+            transform: translateY(-3px);
+        }
+        
+        .time-box span { 
+            display: block; 
+            font-size: clamp(1.8rem, 5vw, 2.5rem); 
+            color: var(--text-red); 
+            font-weight: 800; 
+            line-height: 1;
+            font-family: 'Dancing Script', cursive; 
+        }
+        
+        .time-box label { 
+            font-size: clamp(0.6rem, 2vw, 0.8rem); 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            margin-top: 5px;
+            display: block;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .letter.extracted { transform: translate(-50%, -60%) scale(1.2); }
+            .letter.extracted:hover { transform: translate(-50%, -60%) scale(1.2); }
+            .countdown-container { margin-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="fade-overlay" id="overlay"></div>
+
+    <div class="envelope-wrapper" id="envelopeContainer" onclick="extractLetter()">
+        <div class="rose">🌹</div>
+        <div class="envelope-back"></div>
+        
+        <div class="letter" id="valentineLetter" onclick="openMainPage(event)">
+            <div class="paperclip">📎</div>
+            <h1>Happy</h1>
+            <h2>Valentine's<br>Day</h2>
+            <div class="letter-hint">( Tap to read )</div>
+        </div>
+        
+        <div class="envelope-front"></div>
+        <div class="bow">🎀</div>
+        <div class="stamp">💌</div>
+        
+        <div class="envelope-hint" id="envHint">Tap to Open</div>
+    </div>
+
+    <div class="countdown-container">
+        <div class="time-box">
+            <span id="days">00</span>
+            <label>Days</label>
+        </div>
+        <div class="time-box">
+            <span id="hours">00</span>
+            <label>Hours</label>
+        </div>
+        <div class="time-box">
+            <span id="mins">00</span>
+            <label>Mins</label>
+        </div>
+        <div class="time-box">
+            <span id="secs">00</span>
+            <label>Secs</label>
+        </div>
+    </div>
+
+    <script>
+        let isExtracted = false;
+
+        function extractLetter() {
+            if (isExtracted) return;
+            isExtracted = true;
+            
+            const envelope = document.getElementById('envelopeContainer');
+            const letter = document.getElementById('valentineLetter');
+            const envHint = document.getElementById('envHint');
+            
+            envelope.classList.add('opened');
+            letter.classList.add('extracted');
+            envHint.style.opacity = '0'; 
+        }
+
+        function openMainPage(event) {
+            if (!isExtracted) return;
+            event.stopPropagation();
+            
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                window.location.href = 'main.html';
+            }, 1000);
+        }
+
+        // Countdown Logic
+        const targetDate = new Date('February 14, 2026 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) return;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = mins.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = secs.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
