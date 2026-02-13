@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Forever Valentine</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* --- 1. Color Palette & Variables --- */
+        :root {
+            --cream: #fdfaf6;
+            --light-pink: #fbd1d8;
+            --blush: #f18c9a;
+            --red: #d92d3b;
+            --dark-red: #b82330;
+            --text-dark: #4a4a4a;
+            
+            /* Shadows for depth */
+            --shadow-light: rgba(217, 45, 59, 0.15);
+            --shadow-strong: rgba(217, 45, 59, 0.3);
+            --shadow-polaroid: rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- 2. Base Reset --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html { 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--cream);
+            overflow-x: hidden;
+            width: 100vw;
+            position: relative; /* Important for background flowers */
+        }
+
+        /* --- 3. Fluid Typography --- */
+        /* clamp(min-size, preferred-size, max-size) ensures text adapts to screens */
+        h1 { 
+            font-size: clamp(2.5rem, 6vw, 4.5rem); 
+            color: var(--red); 
+            margin-bottom: 1rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            line-height: 1.1; 
+        }
+        
+        h2 { 
+            font-size: clamp(2rem, 5vw, 3.2rem); 
+            color: var(--red); 
+            margin-bottom: 1.5rem; 
+            font-weight: 700; 
+        }
+        
+        h3 { 
+            font-size: clamp(1.3rem, 3vw, 1.8rem); 
+            color: var(--red); 
+            margin-bottom: 0.5rem; 
+            font-weight: 700; 
+        }
+        
+        p { 
+            line-height: 1.8; 
+            margin-bottom: 1rem; 
+            font-size: clamp(1.05rem, 2.5vw, 1.25rem); 
+            font-weight: 500; 
+        }
+
+        .script-font {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(3rem, 8vw, 5.5rem); 
+            color: var(--red);
+            margin: 0.5rem 0; 
+            transform: rotate(-3deg);
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.7);
+            line-height: 1.2;
+        }
+
+        /* --- 4. Navigation Bar --- */
+        nav {
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%;
+            background: rgba(253, 250, 246, 0.95);
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 2000; /* Extremely high to stay above interactive elements */
+            box-shadow: 0 4px 15px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+        
+        nav ul {
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap;
+            list-style: none; 
+            padding: clamp(0.5rem, 2vw, 1rem); 
+            gap: clamp(0.5rem, 3vw, 2rem);
+        }
+        
+        nav a {
+            text-decoration: none; 
+            color: var(--text-dark);
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 1px; 
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        nav a:hover { 
+            color: var(--red); 
+            transform: translateY(-3px);
+            background: rgba(217, 45, 59, 0.05);
+        }
+
+        /* --- 5. Floating Music Button --- */
+        #musicToggle {
+            position: fixed; 
+            bottom: clamp(15px, 4vw, 30px); 
+            right: clamp(15px, 4vw, 30px);
+            background: var(--red); 
+            color: white;
+            border: none; 
+            border-radius: 50%;
+            width: clamp(50px, 10vw, 65px); 
+            height: clamp(50px, 10vw, 65px); 
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            cursor: pointer; 
+            z-index: 1001;
+            box-shadow: 0 6px 20px var(--shadow-strong);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #musicToggle:hover { 
+            transform: scale(1.15) rotate(15deg); 
+            background: var(--dark-red); 
+        }
+
+        /* --- 6. Section Layouts & Alternating Backgrounds --- */
+        section {
+            min-height: 100vh; 
+            padding: clamp(100px, 15vh, 140px) clamp(15px, 5vw, 40px) clamp(60px, 10vh, 100px);
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            text-align: center; 
+            position: relative; 
+            width: 100%;
+            z-index: 10;
+        }
+
+        /* Vibrant Alternating Palette */
+        #home { background-color: var(--light-pink); }
+        #meeting { background-color: var(--cream); }
+        #reasons { background-color: var(--blush); }
+        #coupons { background-color: var(--cream); }
+        #gallery { background-color: var(--light-pink); }
+        #future { background-color: var(--cream); }
+        #interactive { background-color: var(--blush); }
+        #surprise { background-color: var(--light-pink); }
+
+        /* --- 7. Main Content Cards (Scrapbook Paper Effect) --- */
+        .paper-card {
+            background-color: white;
+            /* Graph paper grid effect */
+            background-image: 
+                linear-gradient(#f4e6e8 1px, transparent 1px),
+                linear-gradient(90deg, #f4e6e8 1px, transparent 1px);
+            background-size: 20px 20px;
+            /* Fluid padding */
+            padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3.5rem); 
+            border-radius: 15px;
+            border: clamp(2px, 0.5vw, 4px) solid var(--red);
+            box-shadow: 8px 8px 0px var(--shadow-light);
+            /* Sizing constraints */
+            width: 95%; 
+            max-width: 1050px; 
+            position: relative; 
+            z-index: 10; 
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .paper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 0px var(--shadow-light);
+        }
+
+        @media (max-width: 768px) {
+            .paper-card {
+                box-shadow: 4px 4px 0px var(--shadow-light);
+                border-radius: 10px;
+                padding: 2.5rem 1.2rem;
+            }
+            .paper-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 6px 6px 0px var(--shadow-light);
+            }
+        }
+        
+        /* Decorative Paperclip on Cards */
+        .paperclip-deco {
+            position: absolute; 
+            top: clamp(-15px, -3vw, -25px); 
+            left: clamp(15px, 5vw, 40px);
+            font-size: clamp(2.5rem, 6vw, 4rem); 
+            transform: rotate(-15deg);
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
+            z-index: 15;
+            transition: transform 0.3s ease;
+        }
+
+        .paper-card:hover .paperclip-deco {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        /* --- 8. Background Decorations (Ribbons, Clouds, Balloons) --- */
+        .ribbon-deco { 
+            position: absolute; 
+            font-size: clamp(3.5rem, 8vw, 6rem); 
+            z-index: 1; 
+            opacity: 0.85; 
+            pointer-events: none;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+        .ribbon-top-left { top: -25px; left: -25px; transform: rotate(-25deg); }
+        .ribbon-bottom-right { bottom: -25px; right: -25px; transform: rotate(155deg); }
+
+        /* Floating Clouds in the Hero Section */
+        .cloud { 
+            position: absolute; 
+            background: white; 
+            border-radius: 50px; 
+            opacity: 0.65; 
+            animation: floatCloud 25s infinite linear; 
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .cloud::before, .cloud::after { 
+            content: ''; 
+            position: absolute; 
+            background: white; 
+            border-radius: 50%; 
+        }
+        .c1 { width: 150px; height: 50px; top: 15%; left: -150px; }
+        .c1::before { width: 70px; height: 70px; top: -35px; left: 25px; }
+        .c1::after { width: 50px; height: 50px; top: -20px; right: 25px; }
+        
+        .c2 { width: 220px; height: 70px; top: 50%; right: -200px; animation-duration: 35s; animation-direction: reverse; }
+        .c2::before { width: 90px; height: 90px; top: -45px; left: 35px; }
+        .c2::after { width: 70px; height: 70px; top: -30px; right: 35px; }
+        
+        @keyframes floatCloud { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(120vw); } 
+        }
+
+        /* Bobbing Heart Balloons */
+        .heart-balloon {
+            position: absolute; 
+            font-size: clamp(3rem, 8vw, 6rem);
+            animation: bob 4s ease-in-out infinite alternate;
+            filter: drop-shadow(0 10px 10px rgba(217,45,59,0.25)); 
+            z-index: 5;
+            pointer-events: none;
+        }
+        .b1 { top: 12%; left: 8%; animation-delay: 0s; transform: rotate(-10deg); }
+        .b2 { top: 25%; right: 10%; animation-delay: -2s; transform: rotate(15deg); font-size: clamp(4.5rem, 10vw, 7.5rem); }
+        .b3 { bottom: 15%; left: 15%; animation-delay: -1s; transform: rotate(5deg); font-size: clamp(2.5rem, 6vw, 4.5rem);}
+        
+        @keyframes bob { 
+            0% { transform: translateY(0) rotate(0deg); } 
+            100% { transform: translateY(-30px) rotate(8deg); } 
+        }
+
+        /* --- 9. Universal Buttons --- */
+        .btn {
+            padding: clamp(12px, 3vw, 18px) clamp(30px, 6vw, 50px); 
+            background-color: var(--red); 
+            color: white;
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: clamp(1rem, 2.5vw, 1.25rem); 
+            font-family: 'Quicksand', sans-serif; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            box-shadow: 0 8px 20px var(--shadow-strong);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            margin-top: 2rem; 
+            text-decoration: none; 
+            display: inline-block;
+        }
+        .btn:hover { 
+            transform: translateY(-6px) scale(1.06); 
+            box-shadow: 0 15px 30px rgba(217, 45, 59, 0.45); 
+            background-color: var(--dark-red); 
+        }
+        .btn:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        /* --- 10. Countdown Timer Display --- */
+        .countdown-container { 
+            display: flex; 
+            gap: clamp(10px, 2vw, 25px); 
+            margin-top: 2.5rem; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+        .time-box {
+            background: white; 
+            padding: clamp(12px, 2.5vw, 18px) clamp(18px, 3vw, 30px); 
+            border-radius: 12px;
+            border: 2px solid var(--red); 
+            box-shadow: 5px 5px 0px var(--shadow-light); 
+            min-width: clamp(75px, 15vw, 100px);
+            transition: transform 0.3s ease;
+        }
+        .time-box:hover {
+            transform: translateY(-3px);
+        }
+        .time-box span { 
+            display: block; 
+            font-size: clamp(2rem, 5vw, 3.2rem); 
+            color: var(--red); 
+            font-weight: 800; 
+            line-height: 1;
+            font-family: 'Dancing Script', cursive; 
+        }
+        .time-box label { 
+            font-size: clamp(0.7rem, 2vw, 0.9rem); 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            margin-top: 8px;
+            display: block;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+        }
+
+        /* --- 11. Reasons List (Sticky Notes Style) --- */
+        .reasons-list { 
+            list-style: none; 
+            padding: 0; 
+            margin-top: 3rem; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+            align-items: center; 
+            width: 100%;
+        }
+        .reasons-list li {
+            background: #fff9c4; /* Light pastel yellow */
+            padding: clamp(18px, 4vw, 30px) clamp(25px, 5vw, 40px); 
+            border-radius: 2px 25px 25px 25px; /* Folded corner effect */
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.08); 
+            width: 100%; 
+            max-width: 750px; 
+            text-align: left;
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem); 
+            font-weight: 700; 
+            color: var(--text-dark); 
+            border-left: 8px solid #ffeb3b;
+            transform: translateX(-50px); 
+            opacity: 0; 
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .reasons-list li:hover {
+            transform: scale(1.02) translateX(0) !important;
+            box-shadow: 6px 6px 20px rgba(0,0,0,0.12);
+            z-index: 5;
+        }
+        .reasons-list li.active { 
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+
+        /* --- 12. 3D Flip Card Love Coupons --- */
+        .coupon-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: clamp(20px, 4vw, 35px); 
+            width: 100%; 
+            margin-top: 3.5rem; 
+        }
+        
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 240px;
+            perspective: 1200px; /* Strong perspective for 3D effect */
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        /* Javascript toggles this class */
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; 
+            backface-visibility: hidden;
+            border-radius: 18px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            box-shadow: 5px 5px 0px var(--shadow-light);
+            border: 3px dashed var(--red);
+        }
+
+        .flip-card-front {
+            background-color: white;
+        }
+        .flip-card-front:hover {
+            background-color: var(--cream);
+            border-color: var(--dark-red);
+        }
+
+        .flip-card-front .icon { 
+            font-size: clamp(3rem, 6vw, 4rem); 
+            margin-bottom: 0.8rem; 
+            transition: transform 0.3s ease;
+        }
+        .flip-card:hover .flip-card-front .icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        
+        .flip-card-front h3 {
+            margin: 0;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+
+        .flip-card-front p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .flip-card-back {
+            background-color: var(--light-pink);
+            border: 3px solid var(--red);
+            color: var(--text-dark);
+            transform: rotateY(180deg);
+            box-shadow: -5px 5px 0px var(--shadow-light); /* Reverse shadow for back */
+        }
+
+        .flip-card-back p {
+            font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+            font-weight: 700;
+            margin: 0;
+            color: var(--dark-red);
+            line-height: 1.5;
+        }
+
+        /* --- 13. Image Gallery Grid --- */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: clamp(15px, 3vw, 30px); 
+            width: 100%; 
+            margin-top: 3.5rem; 
+        }
+        
+        .gallery-item {
+            overflow: hidden; 
+            border-radius: 15px; 
+            border: clamp(4px, 1vw, 6px) solid white; 
+            box-shadow: 6px 6px 15px rgba(0,0,0,0.12); 
+            aspect-ratio: 4/5; 
+            cursor: pointer; 
+            position: relative; 
+            background: #eee;
+        }
+        
+        .gallery-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+        
+        .gallery-item:hover img { 
+            transform: scale(1.15); 
+        }
+
+        /* Fixed Gallery Hover Overlay */
+        .gallery-overlay {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(217, 45, 59, 0.85); /* Semi-transparent red */
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            opacity: 0; 
+            transition: opacity 0.4s ease, transform 0.4s ease; 
+            color: white; 
+            font-family: 'Dancing Script', cursive; 
+            font-size: clamp(2rem, 5vw, 2.8rem); 
+            text-align: center; 
+            padding: 20px; 
+            box-sizing: border-box;
+            z-index: 2;
+            transform: translateY(10px);
+        }
+        
+        .gallery-item:hover .gallery-overlay { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+
+        /* --- 14. Vertical Timeline (Scrapbook Style) --- */
+        .timeline { 
+            position: relative; 
+            max-width: 850px; 
+            margin: 5rem auto 0; 
+            width: 100%; 
+        }
+        
+        /* The dashed center line */
+        .timeline::after { 
+            content: ''; 
+            position: absolute; 
+            width: 0; 
+            border-left: 4px dashed var(--red); 
+            top: 0; 
+            bottom: 0; 
+            left: 50%; 
+            margin-left: -2px; 
+        }
+        
+        .timeline-item { 
+            padding: 10px 50px; 
+            position: relative; 
+            width: 50%; 
+            box-sizing: border-box; 
+            margin-bottom: 4rem; 
+            z-index: 5;
+        }
+        
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-item:nth-child(even) { left: 50%; text-align: left; }
+        
+        /* The Center Heart Nodes */
+        .timeline-item::after {
+            content: '❤️'; 
+            position: absolute; 
+            width: clamp(35px, 6vw, 45px); 
+            height: clamp(35px, 6vw, 45px); 
+            right: clamp(-19px, -3vw, -24px); 
+            background: white; 
+            border: 4px solid var(--red); 
+            top: 20px; 
+            border-radius: 50%;
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: clamp(14px, 2.5vw, 18px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .timeline-item:hover::after {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        .timeline-item:nth-child(even):after { 
+            left: clamp(-20px, -3vw, -25px); 
+        }
+        
+        /* Timeline Content Box */
+        .timeline-content { 
+            padding: clamp(20px, 4vw, 30px); 
+            background: white; 
+            border-radius: 15px; 
+            border: 2px solid var(--light-pink); 
+            box-shadow: 5px 5px 0px var(--shadow-light); 
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            position: relative;
+        }
+        .timeline-item:hover .timeline-content {
+            transform: translateY(-8px);
+            box-shadow: 8px 8px 0px var(--shadow-strong);
+        }
+        
+        .timeline-date { 
+            color: var(--red); 
+            font-weight: 800; 
+            font-size: clamp(0.9rem, 2vw, 1.1rem); 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            background: var(--light-pink);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* --- 15. Pinned Photos (Polaroid Style next to timeline) --- */
+        .pinned-photo {
+            position: absolute;
+            width: clamp(100px, 15vw, 160px);
+            height: clamp(100px, 15vw, 160px);
+            object-fit: cover;
+            border: clamp(4px, 1vw, 8px) solid white;
+            border-bottom-width: clamp(15px, 3vw, 25px); /* Creates polaroid bottom edge */
+            box-shadow: 3px 6px 15px var(--shadow-polaroid);
+            z-index: -1; /* Place slightly behind the content box initially */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0s;
+        }
+        
+        /* Hover to bring photo forward and enlarge */
+        .timeline-item:hover .pinned-photo {
+            transform: scale(1.2) rotate(0deg) !important;
+            z-index: 20;
+            box-shadow: 5px 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Tape graphic on the polaroids */
+        .pinned-photo::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-5deg);
+            width: 40px;
+            height: 15px;
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        /* Placement logic for alternating sides */
+        /* If timeline item is on the left (odd), push photo to the left edge of the box */
+        .timeline-item:nth-child(odd) .pinned-photo {
+            left: -40px; 
+            top: 20px; 
+            transform: rotate(-12deg);
+        }
+        /* If timeline item is on the right (even), push photo to the right edge of the box */
+        .timeline-item:nth-child(even) .pinned-photo {
+            right: -40px; 
+            top: 20px; 
+            transform: rotate(12deg);
+        }
+
+        /* --- 16. Interactive Do You Love Me --- */
+        .btn-group { 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            margin-top: 3.5rem; 
+            position: relative; 
+            min-height: 90px; 
+        }
+        .btn-yes { background: #4CAF50; box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3); }
+        .btn-yes:hover { background: #45a049; box-shadow: 0 12px 25px rgba(76, 175, 80, 0.5); }
+        .btn-no { background: var(--red); position: absolute; }
+
+        /* --- 17. THE SURPRISE GIFT BOX --- */
+        .gift-wrapper {
+            position: relative; 
+            width: clamp(160px, 30vw, 220px); 
+            height: clamp(140px, 25vw, 190px); 
+            margin: 5rem auto 3rem; 
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gift-wrapper:hover { transform: scale(1.05); }
+
+        .gift-bottom {
+            width: 100%; 
+            height: 75%; 
+            background: var(--red); 
+            position: absolute; 
+            bottom: 0; 
+            border-radius: 10px;
+            box-shadow: inset -20px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: center; 
+            z-index: 2;
+        }
+        .gift-ribbon-v { width: 20%; height: 100%; background: var(--light-pink); position: absolute; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .gift-ribbon-h { width: 100%; height: 25%; background: var(--light-pink); position: absolute; top: 35%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .gift-lid {
+            width: 110%; 
+            height: 32%; 
+            background: var(--dark-red); 
+            position: absolute; 
+            bottom: 70%; 
+            left: -5%;
+            border-radius: 6px; 
+            transition: transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            z-index: 3;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.25); 
+            display: flex; 
+            justify-content: center;
+        }
+        .gift-lid-ribbon { width: 18%; height: 100%; background: var(--light-pink); position: absolute; }
+        .gift-bow { position: absolute; top: -75%; font-size: clamp(3rem, 7vw, 5rem); filter: drop-shadow(0 4px 5px rgba(0,0,0,0.2)); }
+
+        /* The Letter Inside */
+        .gift-letter {
+            position: absolute; 
+            bottom: 10%; 
+            left: 15%; 
+            width: 70%; 
+            height: 65%;
+            background: white; 
+            z-index: 1; 
+            transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            border: 4px dashed var(--red); 
+            border-radius: 8px; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+        .gift-letter p { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: clamp(1.8rem, 5vw, 2.8rem); 
+            color: var(--red); 
+            margin: 0; 
+            line-height: 1; 
+        }
+        .gift-letter span { 
+            font-size: clamp(0.7rem, 1.5vw, 1rem); 
+            font-family: 'Quicksand', sans-serif; 
+            color: var(--text-dark); 
+            font-weight: 800; 
+            margin-top: 8px; 
+        }
+
+        /* Open State Animations */
+        .gift-wrapper.open .gift-lid { transform: translateY(-160px) rotate(18deg) scale(1.1); opacity: 0; }
+        .gift-wrapper.open .gift-letter { transform: translateY(-190px) scale(2.6); opacity: 1; z-index: 10; }
+
+        .hint-text { animation: pulse 1.5s infinite; color: var(--red); font-weight: bold; margin-top: 2.5rem; font-size: 1.3rem; letter-spacing: 1px; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+        /* --- 18. Lightbox Modal --- */
+        .lightbox {
+            display: none; 
+            position: fixed; 
+            z-index: 3000; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.95); 
+            backdrop-filter: blur(10px);
+            justify-content: center; 
+            align-items: center; 
+            opacity: 0; 
+            transition: opacity 0.4s ease;
+        }
+        .lightbox.show { display: flex; opacity: 1; }
+        .lightbox img { 
+            max-width: 95%; 
+            max-height: 85vh; 
+            border: clamp(5px, 1.5vw, 12px) solid white; 
+            border-radius: 15px; 
+            transform: scale(0.7); 
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            box-shadow: 0 0 40px rgba(255,255,255,0.15);
+        }
+        .lightbox.show img { transform: scale(1); }
+        .lightbox-close { 
+            position: absolute; 
+            top: clamp(20px, 4vw, 40px); 
+            right: clamp(25px, 5vw, 50px); 
+            color: white; 
+            font-size: clamp(3.5rem, 8vw, 5.5rem); 
+            cursor: pointer; 
+            transition: color 0.3s, transform 0.3s;
+        }
+        .lightbox-close:hover { color: var(--red); transform: scale(1.1); }
+
+        /* --- 19. Scroll Reveal Animations --- */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(60px); 
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .reveal.active { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+
+        /* --- 20. Click Hearts & Blooming Background Effect --- */
+        .click-heart { 
+            position: fixed; 
+            pointer-events: none; 
+            z-index: 9999; 
+            animation: floatFade 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
+            text-shadow: 0 3px 8px rgba(217, 45, 59, 0.4);
+        }
+        @keyframes floatFade { 
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; } 
+            100% { transform: translateY(-130px) scale(1.8) rotate(20deg); opacity: 0; } 
+        }
+
+        /* CSS for the Blooming Background Flowers triggered via JS */
+        .blooming-flower {
+            position: fixed;
+            z-index: 0; 
+            pointer-events: none;
+            opacity: 0;
+            filter: drop-shadow(0 5px 15px rgba(217, 45, 59, 0.1));
+            animation-name: bloomFade;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes bloomFade {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            20% { transform: scale(1.2) rotate(45deg); opacity: 0.5; }
+            50% { transform: scale(1) rotate(90deg); opacity: 0.7; }
+            80% { transform: scale(1.1) rotate(135deg); opacity: 0.5; }
+            100% { transform: scale(0) rotate(180deg); opacity: 0; }
+        }
+
+        /* =====================================================================
+           21. MOBILE RESPONSIVE OVERRIDES
+        ======================================================================== */
+        @media (max-width: 768px) {
+            nav ul { gap: 10px; padding: 10px; }
+            nav a { font-size: 0.75rem; padding: 4px 8px; }
+            
+            .timeline::after { left: 35px; } 
+            .timeline-item { width: 100%; padding-left: 80px; padding-right: 0; margin-bottom: 2.5rem; }
+            .timeline-item:nth-child(even), .timeline-item:nth-child(odd) { left: 0; text-align: left; }
+            .timeline-item::after { left: 16px !important; } 
+            
+            .pinned-photo {
+                width: 70px; height: 70px; border-width: 3px; border-bottom-width: 12px;
+                opacity: 0.8;
+            }
+            .timeline-item:nth-child(odd) .pinned-photo { left: auto; right: -10px; top: -15px; }
+            .timeline-item:nth-child(even) .pinned-photo { left: auto; right: -10px; top: -15px; }
+            
+            .btn-group { flex-direction: column; align-items: center; }
+            .btn-no { position: relative; width: 100%; max-width: 250px; }
+            .btn-yes { width: 100%; max-width: 250px; }
+
+            section { padding: 120px 15px 60px; }
+            .paper-card { padding: 2.5rem 1.2rem; }
+            .reasons-list li { transform: translateX(-20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic">
+        </audio>
+    <button id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#meeting">Start</a></li>
+            <li><a href="#reasons">Reasons</a></li>
+            <li><a href="#coupons">Coupons</a></li>
+            <li><a href="#gallery">Memories</a></li>
+            <li><a href="#future">Timeline</a></li>
+            <li><a href="#interactive">Surprise</a></li>
+            <li><a href="#surprise">Gift</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="heart-balloon b1">💝</div>
+        <div class="heart-balloon b2">🎈</div>
+        <div class="heart-balloon b3">💖</div>
+
+        <div class="paper-card reveal" style="margin-top: 50px;">
+            <div class="paperclip-deco">📎</div>
+            <div class="ribbon-deco ribbon-top-left">🎀</div>
+            
+            <h1>Happy Valentine's</h1>
+            <p class="script-font">My Dearest Love ❤️</p>
+            <p>Every single second counts until I get to see you again.</p>
+            
+            <div class="countdown-container">
+                <div class="time-box"><span id="days">00</span><label>Days</label></div>
+                <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+                <div class="time-box"><span id="mins">00</span><label>Mins</label></div>
+                <div class="time-box"><span id="secs">00</span><label>Secs</label></div>
+            </div>
+
+            <br>
+            <a href="#meeting" class="btn">Begin Our Story</a>
+        </div>
+    </section>
+
+    <section id="meeting">
+        <div class="paper-card reveal">
+            <div class="paperclip-deco" style="left: auto; right: 30px; transform: rotate(15deg);">📎</div>
+            <h2>Where It All Began 🌟</h2>
+            
+            <p>Do you remember our first meeting? It was during that videography session for our club. The world around me faded, and all I could focus on was you. I knew in that exact moment that my life was about to become infinitely better.</p>
+            
+            <p>From those early late-night calls getting to know each other, to our very first date when we went out together to buy your stuff... you were the prettiest girl I had ever laid eyes on. You changed everything for me. It's my absolute favorite love story.</p>
+            
+            <div style="font-size: clamp(3.5rem, 8vw, 5rem); margin-top: 1.5rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.1);">👩‍❤️‍👨💘</div>
+        </div>
+    </section>
+
+    <section id="reasons">
+        <div class="paper-card reveal">
+            <div class="paperclip-deco">📎</div>
+            <h2>A Million Reasons Why 💌</h2>
+            <p>I could go on writing forever, but here are just a few of my favorite things about you...</p>
+            
+            <ul class="reasons-list">
+                <li class="reveal-item">How you put your absolute fullest effort into someone that you care and love. 💖</li>
+                <li class="reveal-item">Your incredible kindness, and how you always know how to work around obstacles and fight through any challenge. 🛡️</li>
+                <li class="reveal-item">You are incredibly smart and rational, always helping me see things clearly. 🧠</li>
+                <li class="reveal-item">Your amazing cooking! I still dream about your Masak Lemak, Sambal Telur, and that delicious Telur Masak Kicap. 🍳</li>
+                <li class="reveal-item">How you are so unbelievably patient, caring, and loving towards me, even when I'm difficult. 🥰</li>
+                <li class="reveal-item">You are simply the best girl ever, and the prettiest girl in the entire universe. ✨</li>
+                <li class="reveal-item">The pure, unmatched comfort I feel just being near you. 🧸</li>
+                <li class="reveal-item">Because with you, My Love, I am entirely and undeniably myself. 👩‍❤️‍👨</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="coupons">
+        <div class="paper-card reveal">
+            <div class="paperclip-deco" style="left: auto; right: 30px; transform: rotate(15deg);">📎</div>
+            <h2>My Love's Coupons 🎟️</h2>
+            <p>Tap a card to flip and redeem! (Warning: Non-refundable, no expiration date).</p>
+            
+            <div class="coupon-grid">
+                
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">🍔</div>
+                            <h3>McDonald's Treat</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>I'll buy you 2 McD meals exactly the way you like them! I love seeing you enjoy your favorite food.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">🎮</div>
+                            <h3>Late Night Gaming</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>Let's stay up late playing our favorite games together! I'll always be your ultimate player two.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">🎬</div>
+                            <h3>Movie Marathon</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>We can binge Moving, Despicable Me 4, or Keluang Man! I'll bring the snacks and infinite cuddles.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">🧸</div>
+                            <h3>One Big Cuddle</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>Valid anytime, anywhere for a minimum of 20 minutes of non-stop cuddles and kisses from me!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">💅</div>
+                            <h3>Nail Salon Date</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>I'll bring you to get your nails done this weekend! You deserve to be fully pampered, my beautiful girl.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card reveal-item" onclick="flipCoupon(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="icon">🎁</div>
+                            <h3>Special Gift Basket</h3>
+                            <p>Tap to flip & redeem!</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Redeemed! 💖<br><br>Redeem for a basket full of Lego flowers, Focallure makeup, cute socks, and your favorite chocolates!</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <div class="paper-card reveal">
+            <div class="paperclip-deco">📎</div>
+            <div class="ribbon-deco ribbon-bottom-right">🎀</div>
+            <h2>Our Beautiful Canvas 📸</h2>
+            <p>Pieces of time, captured just for us.</p>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item reveal-item" onclick="openLightbox('image1.jpg')">
+                    <img src="image1.jpg" alt="Memory 1" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=500&q=80'">
+                    <div class="gallery-overlay">29th November 2024 - Our First Memories</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image2.jpg')">
+                    <img src="image2.jpg" alt="Memory 2" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500&q=80'">
+                    <div class="gallery-overlay">5th December 2024 - Our First Outing</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image3.jpg')">
+                    <img src="image3.jpg" alt="Memory 3" onerror="this.src='https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=500&q=80'">
+                    <div class="gallery-overlay">15th April 2025 - We hangout at the Bowling Place</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image4.jpg')">
+                    <img src="image4.jpg" alt="Memory 4" onerror="this.src='https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=500&q=80'">
+                    <div class="gallery-overlay">22th April 2025 - We went to go get some food together</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image5.jpg')">
+                    <img src="image5.jpg" alt="Memory 5" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd785328017?w=500&q=80'">
+                    <div class="gallery-overlay">28th April 2025 - We went to eat char kuey teow together!</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image6.jpg')">
+                    <img src="image6.jpg" alt="Memory 6" onerror="this.src='https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=500&q=80'">
+                    <div class="gallery-overlay">8th May 2025 - Movie Date together! the horror movie was not good 🤣</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image7.jpg')">
+                    <img src="image7.jpg" alt="Memory 7" onerror="this.src='https://images.unsplash.com/photo-1518599904199-0ca897819ddb?w=500&q=80'">
+                    <div class="gallery-overlay">16th June 2025 - We went for a grocery date</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image8.jpg')">
+                    <img src="image8.jpg" alt="Memory 8" onerror="this.src='https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=500&q=80'">
+                    <div class="gallery-overlay">22th June 2025 - We went for a coffe date at KOPIE</div>
+                </div>
+                <div class="gallery-item reveal-item" onclick="openLightbox('image9.jpg')">
+                    <img src="image9.jpg" alt="Memory 9" onerror="this.src='https://images.unsplash.com/photo-1536590158209-e9d615d525e4?w=500&q=80'">
+                    <div class="gallery-overlay">13th December 2025 - Tomisstan Date!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="future">
+        <div class="paper-card reveal">
+            <div class="paperclip-deco" style="left: auto; right: 30px; transform: rotate(15deg);">📎</div>
+            <h2>Building Our Forever 🏰</h2>
+            <p>Every single step we take together is my favorite memory.</p>
+            
+            <div class="timeline">
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <div class="timeline-date">November 3rd, 2023</div>
+                        <h3 style="margin-top:5px;">First Chat 💬</h3>
+                        <p>The day you first caught my attention at the videography session. The butterflies haven't left since. Sadly there's no picture taken :(</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <div class="timeline-date">January 1st, 2024</div>
+                        <h3 style="margin-top:5px;">Our Anniversary 💝</h3>
+                        <p>Officially us. Loving you more today than I did yesterday. Sadly there's no picture taken :(</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <div class="timeline-date">March 15th, 2024</div>
+                        <h3 style="margin-top:5px;">Late Night Calls 📞</h3>
+                        <p>Talking for hours on end, discovering all the little things that make you amazing. Sadly there's no picture taken :(</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned1.jpg" class="pinned-photo" alt="Polaroid 1" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd785328017?w=200&q=80'">
+                        <div class="timeline-date">November 29th, 2024</div>
+                        <h3 style="margin-top:5px;">First Memories ✨</h3>
+                        <p>The night where we created our first memories together! You looked absolutely magnificent that night like a princess shining her crown, and I am IN LOVE with you.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned2.jpg" class="pinned-photo" alt="Polaroid 2" onerror="this.src='https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=200&q=80'">
+                        <div class="timeline-date">December 31st, 2024</div>
+                        <h3 style="margin-top:5px;">New Year's in Malacca 🎆</h3>
+                        <p>We went on our FIRST trip to Malacca City to celebrate the New Year together!</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned3.jpg" class="pinned-photo" alt="Polaroid 3" onerror="this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&q=80'">
+                        <div class="timeline-date">April 14th, 2025</div>
+                        <h3 style="margin-top:5px;">First TikTok 📱</h3>
+                        <p>We made our FIRST tiktok together in the car at that time! A core memory I'll always cherish.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned4.jpg" class="pinned-photo" alt="Polaroid 4" onerror="this.src='https://images.unsplash.com/photo-1518599904199-0ca897819ddb?w=200&q=80'">
+                        <div class="timeline-date">April 29th, 2025</div>
+                        <h3 style="margin-top:5px;">Hari Raya Celebration 🌙</h3>
+                        <p>We had a Celebration of Hari Raya for our Club and you looked GORGEOUS that night! We took several cute pictures together with the bouquet I gave you hehe!</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned5.jpg" class="pinned-photo" alt="Polaroid 5" onerror="this.src='https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=200&q=80'">
+                        <div class="timeline-date">October 14th, 2025</div>
+                        <h3 style="margin-top:5px;">Polaroids in Malacca 📸</h3>
+                        <p>We went to Malacca once again, and this time we took our first polaroid picture together!</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned6.jpg" class="pinned-photo" alt="Polaroid 6" onerror="this.src='https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=200&q=80'">
+                        <div class="timeline-date">December 5th, 2025</div>
+                        <h3 style="margin-top:5px;">KASWARA Program 🎭</h3>
+                        <p>We went to see the KASWARA program together and we were looking so matchy together with our classic looks hehe!</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned7.jpg" class="pinned-photo" alt="Polaroid 7" onerror="this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&q=80'">
+                        <div class="timeline-date">December 13th, 2025</div>
+                        <h3 style="margin-top:5px;">Muar Date ☕</h3>
+                        <p>We went to Tomisttan Cafe at Muar, and then went for a beautiful walk at Muar! Such a peaceful and perfect day with you.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned8.jpg" class="pinned-photo" alt="Polaroid 8" onerror="this.src='https://images.unsplash.com/photo-1536590158209-e9d615d525e4?w=200&q=80'">
+                        <div class="timeline-date">December 17th, 2025</div>
+                        <h3 style="margin-top:5px;">By My Side 🏥</h3>
+                        <p>You came along to accompany me before I got discharged to the hospital that night before my surgery :( Thank you for caring so much about me, my love.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned9.jpg" class="pinned-photo" alt="Polaroid 9" onerror="this.src='https://images.unsplash.com/photo-1511895426328-dc8714191300?w=200&q=80'">
+                        <div class="timeline-date">January 24th, 2026</div>
+                        <h3 style="margin-top:5px;">Muar with Mama ❤️</h3>
+                        <p>We went to Muar once again, but this time with Mama, for the last time before our semester ended :( We made so many memories this day, sharing a lot of sad and fun times together. I MISS YOU MY LOVE!</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-content">
+                        <img src="pinned10.jpg" class="pinned-photo" alt="Polaroid 10" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=200&q=80'">
+                        <div class="timeline-date">Forever</div>
+                        <h3 style="margin-top:5px;">The Future 🚀</h3>
+                        <p>Growing old together, traveling the world, and holding hands until the end of time.</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <section id="interactive">
+        <div class="paper-card reveal" style="padding-bottom: clamp(4rem, 10vw, 7rem);">
+            <div class="paperclip-deco">📎</div>
+            <h2>Just a quick question...</h2>
+            <p class="script-font" style="font-size: clamp(3.5rem, 8vw, 5.5rem);">Do you love me?</p>
+            
+            <div class="btn-group">
+                <button class="btn btn-yes" onclick="celebrateYes()">YES! 🥰</button>
+                <button class="btn btn-no" id="noBtn">No way</button>
+            </div>
+            
+            <div id="yesMessage" style="display:none; margin-top: 4rem; color: var(--red); font-size: clamp(1.8rem, 5vw, 3rem); font-weight: bold; font-family: 'Dancing Script', cursive;">
+                I knew it! I love you endlessly! ❤️
+            </div>
+        </div>
+    </section>
+
+    <section id="surprise">
+        <div class="paper-card reveal" style="padding-bottom: clamp(4rem, 10vw, 7rem);">
+            <div class="paperclip-deco" style="left: auto; right: 30px; transform: rotate(15deg);">📎</div>
+            <h2>A Surprise For My Love 🎁</h2>
+            <p>Tap the gift box below to open your present!</p>
+            
+            <div class="gift-wrapper" id="giftBox" onclick="openGift()">
+                <div class="gift-letter" id="surpriseLetter">
+                    <p>I LOVE<br>YOU!</p>
+                    <span>- Forever yours</span>
+                </div>
+                
+                <div class="gift-bottom">
+                    <div class="gift-ribbon-v"></div>
+                    <div class="gift-ribbon-h"></div>
+                </div>
+                <div class="gift-lid">
+                    <div class="gift-bow">🎀</div>
+                    <div class="gift-lid-ribbon"></div>
+                </div>
+            </div>
+
+            <p class="hint-text" id="giftHint">Tap to open!</p>
+            <button class="btn" id="resetGiftBtn" style="display:none; margin-top: 3rem;" onclick="resetGift()">Pack it back up 📦</button>
+        </div>
+    </section>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightboxImg" src="" alt="Expanded Memory">
+    </div>
+
+    <script>
+        /* ---------------------------------------------------------------------
+           A. BLOOMING BACKGROUND FLOWERS ENGINE
+           Spawns random cute flowers in the background that bloom and fade.
+        ---------------------------------------------------------------------- */
+        const flowerEmojis = ['🌸', '🌺', '🌼', '🌷', '🌻'];
+        
+        function spawnBackgroundFlower() {
+            // Create flower element
+            const flower = document.createElement('div');
+            flower.className = 'blooming-flower';
+            flower.innerText = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+            
+            // Randomize position across the entire document body
+            const randomX = Math.random() * 95; // 0 to 95vw
+            
+            // We want flowers to spawn randomly down the scrollable height of the page
+            const pageHeight = Math.max(
+                document.body.scrollHeight, document.documentElement.scrollHeight,
+                document.body.offsetHeight, document.documentElement.offsetHeight,
+                document.body.clientHeight, document.documentElement.clientHeight
+            );
+            
+            const randomY = Math.random() * pageHeight;
+            
+            // Randomize size
+            const randomSize = Math.random() * 3 + 2; // 2rem to 5rem
+            
+            // Randomize animation duration to make them feel organic
+            const randomDuration = Math.random() * 6 + 6; // 6s to 12s
+            
+            // Apply styles
+            flower.style.left = `${randomX}vw`;
+            flower.style.top = `${randomY}px`;
+            flower.style.fontSize = `${randomSize}rem`;
+            flower.style.animationDuration = `${randomDuration}s`;
+            
+            // Add to body
+            document.body.appendChild(flower);
+            
+            // Remove flower after its animation completes to keep the DOM clean
+            setTimeout(() => {
+                flower.remove();
+            }, randomDuration * 1000);
+        }
+
+        // Initialize background flowers. Spawn a batch immediately, then keep spawning over time.
+        function initFlowers() {
+            // Spawn initial batch
+            for(let i=0; i<30; i++) {
+                setTimeout(spawnBackgroundFlower, Math.random() * 5000);
+            }
+            // Continuously spawn new ones
+            setInterval(spawnBackgroundFlower, 700);
+        }
+        
+        // Start flowers on load
+        window.addEventListener('load', initFlowers);
+
+
+        /* ---------------------------------------------------------------------
+           B. COUNTDOWN TIMER
+           Counts down to Valentine's Day 2026.
+        ---------------------------------------------------------------------- */
+        const targetDate = new Date('February 14, 2026 00:00:00').getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            if (distance < 0) return; // Stop if passed
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = mins.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = secs.toString().padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000); 
+        updateCountdown();
+
+
+        /* ---------------------------------------------------------------------
+           C. SCROLL REVEAL OBSERVER (Fade up on scroll)
+        ---------------------------------------------------------------------- */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { 
+                    entry.target.classList.add('active'); 
+                    // Unobserve to improve performance after revealing
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.reveal, .reveal-item').forEach(el => observer.observe(el));
+        
+        // Staggered animation for Reasons List items
+        document.querySelectorAll('.reasons-list li').forEach((li, index) => {
+            li.style.transitionDelay = `${index * 0.12}s`;
+        });
+
+
+        /* ---------------------------------------------------------------------
+           D. LIGHTBOX GALLERY LOGIC
+        ---------------------------------------------------------------------- */
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        
+        function openLightbox(src) {
+            // Retrieve actual image source (works with our Unsplash fallbacks)
+            lightboxImg.src = event.currentTarget.querySelector('img').src;
+            lightbox.style.display = 'flex'; 
+            setTimeout(() => lightbox.classList.add('show'), 10);
+        }
+        
+        function closeLightbox() {
+            lightbox.classList.remove('show'); 
+            setTimeout(() => lightbox.style.display = 'none', 300);
+        }
+        
+        lightbox.addEventListener('click', (e) => { 
+            if(e.target === lightbox) closeLightbox(); 
+        });
+
+
+        /* ---------------------------------------------------------------------
+           E. INTERACTIVE "DO YOU LOVE ME?" (Runaway Button)
+        ---------------------------------------------------------------------- */
+        const noBtn = document.getElementById('noBtn');
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        
+        if (!isMobile) {
+            // Desktop: Evade mouse
+            noBtn.addEventListener('mouseover', function() {
+                const randomX = Math.floor(Math.random() * 400) - 200;
+                const randomY = Math.floor(Math.random() * 200) - 100;
+                this.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            });
+        } else {
+            // Mobile: Evade taps
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault(); 
+                const randomX = Math.floor(Math.random() * 200) - 100;
+                const randomY = Math.floor(Math.random() * 200) - 100;
+                this.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            });
+        }
+        
+        function celebrateYes() {
+            document.getElementById('yesMessage').style.display = 'block'; 
+            noBtn.style.display = 'none';
+            // Spawn an explosion of hearts!
+            for(let i=0; i<40; i++) setTimeout(spawnClickHeart, i * 80);
+            fireConfetti();
+        }
+
+
+        /* ---------------------------------------------------------------------
+           F. LOVE COUPONS (3D FLIP LOGIC)
+        ---------------------------------------------------------------------- */
+        function flipCoupon(cardElement) {
+            if (!cardElement.classList.contains('flipped')) {
+                cardElement.classList.add('flipped');
+                // Small confetti pop on redemption
+                setTimeout(fireConfetti, 400);
+            }
+        }
+
+
+        /* ---------------------------------------------------------------------
+           G. BACKGROUND MUSIC TOGGLE & PLAYLIST
+           Cycles through bgm1.mp3, bgm2.mp3, and bgm3.mp3
+        ---------------------------------------------------------------------- */
+        const music = document.getElementById('bgMusic');
+        const playlist = ['bgm1.mp3', 'bgm2.mp3', 'bgm3.mp3']; // Files cycling
+        let currentTrack = 0;
+        let isPlaying = false; 
+        music.volume = 0.35; // Lowered for pleasant ambient listening
+
+        // Set the initial track to the first song in the playlist
+        music.src = playlist[currentTrack];
+
+        // Autoplay the next track when the current one ends
+        music.addEventListener('ended', function() {
+            currentTrack = (currentTrack + 1) % playlist.length; // Loops back to 0 at the end
+            music.src = playlist[currentTrack];
+            music.play();
+        });
+        
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggle');
+            if(isPlaying) { 
+                music.pause(); 
+                btn.innerHTML = '🎵'; 
+                btn.style.background = 'var(--red)'; 
+            } else { 
+                music.play(); 
+                btn.innerHTML = '⏸️'; 
+                btn.style.background = 'var(--dark-red)'; 
+            }
+            isPlaying = !isPlaying;
+        }
+
+
+        /* ---------------------------------------------------------------------
+           H. FLOATING HEARTS ON CLICK
+        ---------------------------------------------------------------------- */
+        const clickEmojis = ['❤️', '✨', '💖', '🎀', '💌', '🌸'];
+        
+        document.addEventListener('click', function(e) {
+            // Prevent spawning when clicking links/buttons/cards to keep UI clean
+            if(['a', 'button'].includes(e.target.tagName.toLowerCase())) return;
+            if(e.target.closest('.flip-card') || e.target.closest('.gallery-item')) return;
+            
+            const heart = document.createElement('div');
+            heart.innerHTML = clickEmojis[Math.floor(Math.random() * clickEmojis.length)];
+            heart.className = 'click-heart';
+            heart.style.left = `${e.clientX - 10}px`; 
+            heart.style.top = `${e.clientY - 10}px`;
+            heart.style.fontSize = `${Math.random() * 1.5 + 1.2}rem`;
+            
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1200);
+        });
+
+        // Independent heart spawner for celebrations
+        function spawnClickHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = clickEmojis[Math.floor(Math.random() * clickEmojis.length)];
+            heart.className = 'click-heart';
+            heart.style.left = `${Math.random() * 100}vw`; 
+            heart.style.top = `${window.innerHeight}px`;
+            heart.style.fontSize = `${Math.random() * 2 + 1.5}rem`; 
+            heart.style.animationDuration = `${Math.random() * 2 + 1.5}s`;
+            
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3500);
+        }
+
+
+        /* ---------------------------------------------------------------------
+           I. SURPRISE GIFT BOX LOGIC
+        ---------------------------------------------------------------------- */
+        let giftOpened = false;
+
+        function openGift() {
+            if(giftOpened) return;
+            giftOpened = true;
+            
+            const giftBox = document.getElementById('giftBox');
+            giftBox.classList.add('open'); // Triggers the CSS transform on lid & letter
+            
+            document.getElementById('giftHint').style.display = 'none';
+            
+            // Fire Confetti Explosion!
+            fireConfetti();
+            setTimeout(fireConfetti, 250); // Double explosion
+            setTimeout(fireConfetti, 500); // Triple explosion for maximum joy
+            
+            // Show reset button after animation completes
+            setTimeout(() => {
+                document.getElementById('resetGiftBtn').style.display = 'inline-block';
+            }, 1000);
+        }
+
+        function resetGift() {
+            giftOpened = false;
+            const giftBox = document.getElementById('giftBox');
+            giftBox.classList.remove('open');
+            
+            document.getElementById('giftHint').style.display = 'block';
+            document.getElementById('resetGiftBtn').style.display = 'none';
+        }
+
+        // Wrapper function for the Canvas-Confetti library
+        function fireConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 90,
+                origin: { y: 0.6 },
+                colors: ['#d92d3b', '#fbd1d8', '#ffffff', '#ffb6c1', '#f18c9a']
+            });
+        }
+    </script>
+</body>
+</html>
